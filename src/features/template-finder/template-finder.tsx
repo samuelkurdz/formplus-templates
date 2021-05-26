@@ -6,6 +6,7 @@ import TemplatePreview from '../../components/preview-templates/preview-template
 import SearchFilter from '../../components/search-filter-bar/search-filter';
 import { selectState, getTemplatesAsync } from './template-finderSlice';
 import { TemplateCardSkeleton } from '../../components/template-skeleton/template-skeleton';
+import ErrorPage from '../../components/error/error';
 
 
 const TemplateFinder = () => {
@@ -24,7 +25,8 @@ const TemplateFinder = () => {
 			<SearchFilter />
 			<Alert message={message} type="warning"/>
 			{
-				loadingStatus === 'idle' ? <TemplatePreview /> : <TemplateCardSkeleton />
+				loadingStatus === 'idle' ? <TemplatePreview /> :
+				(loadingStatus === 'failed' ? <ErrorPage /> : <TemplateCardSkeleton />)
 			}
 			{/* <TemplatePreview /> */}
 		</div>

@@ -1,8 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import './search-filter.css';
 
 
 const SearchFilter = () => {
+	const onOrderSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+		event.preventDefault();
+		console.log(event.isPropagationStopped());
+		console.log(event);
+		console.log(event.target.value);
+		setTimeout(() => {
+			console.log(event.isPropagationStopped());
+		}, 1000);
+	}
+
 	return (
 		<>
 			<form className="flex flex-col sm:flex-row justify-between content-center mb-10">
@@ -16,8 +26,8 @@ const SearchFilter = () => {
 					<p className="my-auto text-gray-400 text-xs">Sort By:</p>
 					<div className="form-group">
 						<label htmlFor="category">Category</label>
-						<select name="category" id="category">
-							<option value="" selected>All</option>
+						<select name="category" id="category" defaultValue="">
+							<option value="">All</option>
 							<option value="agriculture">Agriculture</option>
 							<option value="education">Education</option>
 							<option value="ecommerce">E-commerce</option>
@@ -26,16 +36,16 @@ const SearchFilter = () => {
 					</div>
 					<div className="form-group">
 						<label htmlFor="order">Order</label>
-						<select name="order" id="order">
-							<option value="" selected>Default</option>
+						<select name="order" id="order" defaultValue="" onChange={onOrderSelectChange}>
+							<option value="">Default</option>
 							<option value="ascending">Ascending</option>
 							<option value="descending">Descending</option>
 						</select>
 					</div>
 					<div className="form-group">
 						<label htmlFor="date">Date</label>
-						<select name="date" id="date">
-							<option value="" selected>Default</option>
+						<select name="date" id="date" defaultValue="">
+							<option value="">Default</option>
 							<option value="ascending">Ascending</option>
 							<option value="descending">Descending</option>
 						</select>
