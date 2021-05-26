@@ -1,20 +1,24 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app-store/store';
-import { Template } from '../../models/template.interface';
-
+import { QueryObject, Template } from '../../models/template.interface';
+ 
 
 export interface TemplateState {
 	templates: Template[];
 	pages: number;
 	activePage: number;
-	status: 'loading' | 'idle' | 'failed'
+	status: 'loading' | 'idle' | 'failed',
+	queryResultTemplates?: Template[];
+	query?: QueryObject;
 }
   
 const initialState: TemplateState = {
 	templates: [],
 	status: 'loading',
 	pages: 1,
-	activePage: 1
+	activePage: 1,
+	query: undefined,
+	queryResultTemplates: []
 };
 
 // Async code can be executed and other actions can be dispatched. Thunks are

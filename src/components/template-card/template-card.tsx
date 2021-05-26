@@ -1,6 +1,7 @@
 import React from 'react';
-import { Template } from '../../models/template.interface';
 import './template-card.css';
+
+import { Template } from '../../models/template.interface';
 
 
 export const TemplateCard: React.FC<Template> = ({name, description, link}) => {

@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import './template-finder.css';
+
 import { useAppDispatch, useAppSelector } from '../../app-store/hooks';
+import { selectState, getTemplatesAsync } from './template-finderSlice';
+
+import { TemplateCardSkeleton } from '../../components/template-skeleton/template-skeleton';
 import Alert from '../../components/alert/alert';
 import TemplatePreview from '../../components/preview-templates/preview-templates';
 import SearchFilter from '../../components/search-filter-bar/search-filter';
-import { selectState, getTemplatesAsync } from './template-finderSlice';
-import { TemplateCardSkeleton } from '../../components/template-skeleton/template-skeleton';
 import ErrorPage from '../../components/error/error';
 
 

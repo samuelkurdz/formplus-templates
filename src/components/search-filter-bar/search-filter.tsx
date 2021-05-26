@@ -5,12 +5,8 @@ import './search-filter.css';
 const SearchFilter = () => {
 	const onOrderSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
-		console.log(event.isPropagationStopped());
 		console.log(event);
 		console.log(event.target.value);
-		setTimeout(() => {
-			console.log(event.isPropagationStopped());
-		}, 1000);
 	}
 
 	return (

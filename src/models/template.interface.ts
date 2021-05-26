@@ -5,3 +5,9 @@ export interface Template {
 	category: string[];
 	description: string;
 }
+export interface QueryObject {
+	searchText?: string;
+	category?: string;
+	order?: string;
+	Date?: string;
+}
