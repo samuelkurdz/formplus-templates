@@ -1,0 +1,7 @@
+.alert-wrapper {
+    @apply text-xs my-2 w-full text-center py-2.5 px-3 flex content-center space-x-2 justify-center rounded-sm font-normal;
+}
+
+.alert-wrapper > svg {
+    min-width: 25px;
+}

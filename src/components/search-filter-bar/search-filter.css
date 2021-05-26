@@ -1,0 +1,17 @@
+.form-group {
+	@apply flex flex-col relative;
+}
+
+label {
+	@apply text-gray-400;
+	position: absolute;
+	top: -10px;
+	left: 8px;
+	background: white;
+	font-size: 11px;
+	padding: 0 5px;
+}
+
+select, input[type='text'] {
+	@apply text-xs rounded-sm;
+}
