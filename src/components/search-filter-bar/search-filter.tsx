@@ -54,10 +54,10 @@ const SearchFilter = () => {
 						<label htmlFor="category">Category</label>
 						<select name="category" id="category" value={query.category} onChange={onSelectChange}>
 							<option value="default">All</option>
-							<option value="agriculture">Agriculture</option>
-							<option value="education">Education</option>
-							<option value="ecommerce">E-commerce</option>
-							<option value="health">Health</option>
+							{/* <option value="Agriculture">Agriculture</option> */}
+							<option value="Education">Education</option>
+							<option value="E-commerce">E-commerce</option>
+							<option value="Health">Health</option>
 						</select>
 					</div>
 					<div className="form-group">

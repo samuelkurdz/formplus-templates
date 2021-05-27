@@ -4,13 +4,13 @@ import './preview-templates.css';
 import { useAppSelector } from '../../app-store/hooks';
 
 import { TemplateCard } from '../template-card/template-card';
-import { selectNumberOfTemplates, selectTemplates } from '../../features/template-finder/template-finderSlice';
+import { selectLengthOfTemplates, selectTemplatesPerPage } from '../../features/template-finder/template-finderSlice';
 import { Paginator } from '../paginator/paginator';
 
 const TemplatePreview = () => {
 	// let [templates, setTemplates] = useState<Template[]>([]);
-	let templates = useAppSelector(selectTemplates);
-	let noOfTemplates = useAppSelector(selectNumberOfTemplates);
+	let templates = useAppSelector(selectTemplatesPerPage);
+	let noOfTemplates = useAppSelector(selectLengthOfTemplates);
 	return (
 		<div className="mt-12">
 			<div className="flex justify-between content-center">

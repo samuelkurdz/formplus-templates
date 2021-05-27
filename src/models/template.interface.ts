@@ -6,8 +6,8 @@ export interface Template {
 	description: string;
 }
 export interface QueryObject {
-	searchText?: string;
-	category?: string;
-	order?: string;
-	date?: string;
+	searchText: string;
+	category: string;
+	order: string;
+	date: string;
 }

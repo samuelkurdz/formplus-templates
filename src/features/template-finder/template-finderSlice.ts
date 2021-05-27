@@ -18,7 +18,7 @@ const initialState: TemplateState = {
 	pages: 1,
 	activePage: 1,
 	query: {
-		searchText: undefined,
+		searchText: '',
 		category: 'default',
 		date: 'default',
 		order: 'default'
@@ -77,8 +77,9 @@ export const templateSlice = createSlice({
 export const { setTemplates, setQueryResultTemplates, setQueryToStore } = templateSlice.actions;
 
 // selectors
-export const selectTemplates = (state: RootState) => state.template.templates.slice(0, 30);
-export const selectNumberOfTemplates = (state: RootState) => state.template.templates.length;
+export const selectAllTemplates = (state: RootState) => state.template.templates;
+export const selectTemplatesPerPage = (state: RootState) => state.template.templates.slice(0, 30);
+export const selectLengthOfTemplates = (state: RootState) => state.template.templates.length;
 export const selectState = (state: RootState) => state.template.status;
 export const selectPages = (state: RootState) => state.template.pages;
 export const selectActivePage = (state: RootState) => state.template.activePage;
@@ -87,12 +88,32 @@ export const selectQueryResultTemplates = (state: RootState) => state.template.q
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
-export const queryResolver = (query: QueryObject): AppThunk => (dispatch, getState) => {
+export const queryResolver = (query: QueryObject): AppThunk => async(dispatch, getState) => {
 	const storedQuery = selectQueryData(getState());
+	const totalTemplates = selectAllTemplates(getState());
 	if (query !== storedQuery) {
 		query = {...query, searchText: query.searchText?.trimLeft()};
-		console.log(query);
 		dispatch(setQueryToStore(query));
+
+		let sortedTemplates: Template[] = [];
+		if (query.category !== 'default') {
+			sortedTemplates = totalTemplates.filter(
+				template => template.category.includes(query.category)
+			);
+		} else {
+			sortedTemplates = totalTemplates;
+		}
+
+		// if (query.order !== 'default' && query.order === 'ascending') {
+		// 	sortedTemplates.sort((a,b) => {
+		// 		let nameA = a.name.toLowerCase();
+		// 		let nameB = b.name.toLowerCase();
+		// 		if(nameA < nameB) { return -1; }
+		// 		if(nameA > nameB) { return 1; }
+		// 		return 0;
+		// 	});
+		// }
+		dispatch(setQueryResultTemplates(sortedTemplates));
 	}
 };
 
