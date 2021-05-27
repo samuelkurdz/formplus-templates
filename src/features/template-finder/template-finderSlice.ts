@@ -9,7 +9,7 @@ export interface TemplateState {
 	activePage: number;
 	status: 'loading' | 'idle' | 'failed',
 	queryResultTemplates?: Template[];
-	query?: QueryObject;
+	query: QueryObject;
 }
   
 const initialState: TemplateState = {
@@ -17,7 +17,12 @@ const initialState: TemplateState = {
 	status: 'loading',
 	pages: 1,
 	activePage: 1,
-	query: undefined,
+	query: {
+		searchText: undefined,
+		category: 'default',
+		date: 'default',
+		order: 'default'
+	},
 	queryResultTemplates: []
 };
 
@@ -40,8 +45,14 @@ export const templateSlice = createSlice({
 	// actions
 	reducers: {
 		setTemplates: (state, action: PayloadAction<Template[]>) => {
-			state.templates = [...action.payload]
+			state.templates = action.payload;
 		},
+		setQueryResultTemplates: (state, action: PayloadAction<Template[]>) => {
+			state.queryResultTemplates = action.payload;
+		},
+		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
+			state.query = action.payload;
+		}
 	},
 	extraReducers: (builder) => {
     builder
@@ -63,16 +74,26 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { setTemplates } = templateSlice.actions;
+export const { setTemplates, setQueryResultTemplates, setQueryToStore } = templateSlice.actions;
 
 // selectors
-// export const selectTemplates = (state: RootState) => state.template.templates.filter(
-// 	(template, index) => index < 30
-// 	);
 export const selectTemplates = (state: RootState) => state.template.templates.slice(0, 30);
 export const selectNumberOfTemplates = (state: RootState) => state.template.templates.length;
 export const selectState = (state: RootState) => state.template.status;
 export const selectPages = (state: RootState) => state.template.pages;
 export const selectActivePage = (state: RootState) => state.template.activePage;
+export const selectQueryData = (state: RootState) => state.template.query;
+export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
+
+// We can also write thunks by hand, which may contain both sync and async logic.
+// Here's an example of conditionally dispatching actions based on current state.
+export const queryResolver = (query: QueryObject): AppThunk => (dispatch, getState) => {
+	const storedQuery = selectQueryData(getState());
+	if (query !== storedQuery) {
+		query = {...query, searchText: query.searchText?.trimLeft()};
+		console.log(query);
+		dispatch(setQueryToStore(query));
+	}
+};
 
 export default templateSlice.reducer;

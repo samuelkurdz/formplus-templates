@@ -2,9 +2,6 @@ import React from "react"
 import { useAppSelector } from "../../app-store/hooks";
 import { selectPages } from "../../features/template-finder/template-finderSlice";
 
-// interface PaginatorProps {
-//     PagesNumber: number
-// }
 
 export const Paginator: React.FC = () => {
     let PagesNumber = useAppSelector(selectPages);

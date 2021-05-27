@@ -9,5 +9,5 @@ export interface QueryObject {
 	searchText?: string;
 	category?: string;
 	order?: string;
-	Date?: string;
+	date?: string;
 }

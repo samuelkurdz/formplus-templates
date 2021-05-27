@@ -4,7 +4,7 @@ import './preview-templates.css';
 import { useAppSelector } from '../../app-store/hooks';
 
 import { TemplateCard } from '../template-card/template-card';
-import { selectNumberOfTemplates, selectPages, selectTemplates } from '../../features/template-finder/template-finderSlice';
+import { selectNumberOfTemplates, selectTemplates } from '../../features/template-finder/template-finderSlice';
 import { Paginator } from '../paginator/paginator';
 
 const TemplatePreview = () => {
