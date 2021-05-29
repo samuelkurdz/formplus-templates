@@ -1,0 +1,7 @@
+build
+node_modules
+serviceWorker.ts
+
+# working styles configurations
+craco.config.js
+tailwind.config.js

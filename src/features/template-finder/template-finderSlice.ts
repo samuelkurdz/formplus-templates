@@ -1,17 +1,17 @@
+/* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app-store/store';
 import { QueryObject, Template } from '../../models/template.interface';
- 
 
 export interface TemplateState {
 	templates: Template[];
 	pages: number;
 	activePage: number;
-	status: 'loading' | 'idle' | 'failed',
+	status: 'loading' | 'idle' | 'failed';
 	queryResultTemplates?: Template[];
 	query: QueryObject;
 }
-  
+
 const initialState: TemplateState = {
 	templates: [],
 	status: 'loading',
@@ -21,22 +21,19 @@ const initialState: TemplateState = {
 		searchText: '',
 		category: 'default',
 		date: 'default',
-		order: 'default'
+		order: 'default',
 	},
-	queryResultTemplates: []
+	queryResultTemplates: [],
 };
 
 // Async code can be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const getTemplatesAsync = createAsyncThunk(
-  'template/fetchTemplates', async () => {
-    const response = await fetch('https://front-end-task-dot-fpls-dev.uc.r.appspot.com/api/v1/public/task_templates');
-		const templates = await response.json();
-		// console.log(templates);
-    // The value we return becomes the `fulfilled` action payload
-    return templates;
-  }
-);
+export const getTemplatesAsync = createAsyncThunk('template/fetchTemplates', async () => {
+	const response = await fetch('https://front-end-task-dot-fpls-dev.uc.r.appspot.com/api/v1/public/task_templates');
+	const templates = await response.json();
+	// The value we return becomes the `fulfilled` action payload
+	return templates;
+});
 
 // state slice
 export const templateSlice = createSlice({
@@ -52,26 +49,25 @@ export const templateSlice = createSlice({
 		},
 		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
 			state.query = action.payload;
-		}
+		},
 	},
 	extraReducers: (builder) => {
-    builder
-      .addCase(getTemplatesAsync.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(getTemplatesAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+		builder
+			.addCase(getTemplatesAsync.pending, (state) => {
+				state.status = 'loading';
+			})
+			.addCase(getTemplatesAsync.fulfilled, (state, action) => {
+				state.status = 'idle';
 				// if (action.payload) {
 				// 	state.pages = Math.round((action.payload.length / 30));
 				// }
-				state.pages = Math.round((action.payload.length / 30));
-        state.templates = action.payload;
-      })
+				state.pages = Math.round(action.payload.length / 30);
+				state.templates = action.payload;
+			})
 			.addCase(getTemplatesAsync.rejected, (state) => {
-				console.log('big fat rejected or network error; NICE');
 				state.status = 'failed';
 			});
-  },
+	},
 });
 
 export const { setTemplates, setQueryResultTemplates, setQueryToStore } = templateSlice.actions;
@@ -88,33 +84,33 @@ export const selectQueryResultTemplates = (state: RootState) => state.template.q
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
-export const queryResolver = (query: QueryObject): AppThunk => async(dispatch, getState) => {
-	const storedQuery = selectQueryData(getState());
-	const totalTemplates = selectAllTemplates(getState());
-	if (query !== storedQuery) {
-		query = {...query, searchText: query.searchText?.trimLeft()};
-		dispatch(setQueryToStore(query));
+export const queryResolver =
+	(query: QueryObject): AppThunk =>
+	async (dispatch, getState) => {
+		const storedQuery = selectQueryData(getState());
+		const totalTemplates = selectAllTemplates(getState());
+		if (query !== storedQuery) {
+			query = { ...query, searchText: query.searchText?.trimLeft() };
+			dispatch(setQueryToStore(query));
 
-		let sortedTemplates: Template[] = [];
-		if (query.category !== 'default') {
-			sortedTemplates = totalTemplates.filter(
-				template => template.category.includes(query.category)
-			);
-		} else {
-			sortedTemplates = totalTemplates;
+			let sortedTemplates: Template[] = [];
+			if (query.category !== 'default') {
+				sortedTemplates = totalTemplates.filter((template) => template.category.includes(query.category));
+			} else {
+				sortedTemplates = totalTemplates;
+			}
+
+			// if (query.order !== 'default' && query.order === 'ascending') {
+			// 	sortedTemplates.sort((a,b) => {
+			// 		let nameA = a.name.toLowerCase();
+			// 		let nameB = b.name.toLowerCase();
+			// 		if(nameA < nameB) { return -1; }
+			// 		if(nameA > nameB) { return 1; }
+			// 		return 0;
+			// 	});
+			// }
+			dispatch(setQueryResultTemplates(sortedTemplates));
 		}
-
-		// if (query.order !== 'default' && query.order === 'ascending') {
-		// 	sortedTemplates.sort((a,b) => {
-		// 		let nameA = a.name.toLowerCase();
-		// 		let nameB = b.name.toLowerCase();
-		// 		if(nameA < nameB) { return -1; }
-		// 		if(nameA > nameB) { return 1; }
-		// 		return 0;
-		// 	});
-		// }
-		dispatch(setQueryResultTemplates(sortedTemplates));
-	}
-};
+	};
 
 export default templateSlice.reducer;
