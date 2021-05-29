@@ -2,7 +2,7 @@
 	@apply flex flex-col relative;
 }
 
-label {
+label > p {
 	@apply text-gray-400;
 	position: absolute;
 	top: -10px;
