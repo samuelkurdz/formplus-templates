@@ -59,5 +59,3 @@ export const Counter = () => {
     </div>
   );
 }
-2336
-2210
