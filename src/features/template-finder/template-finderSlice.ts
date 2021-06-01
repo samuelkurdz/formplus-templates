@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app-store/store';
@@ -8,7 +9,7 @@ export interface TemplateState {
 	pages: number;
 	activePage: number;
 	status: 'loading' | 'idle' | 'failed';
-	queryResultTemplates?: Template[];
+	queryResultTemplates: Template[];
 	query: QueryObject;
 }
 
@@ -45,10 +46,14 @@ export const templateSlice = createSlice({
 			state.templates = action.payload;
 		},
 		setQueryResultTemplates: (state, action: PayloadAction<Template[]>) => {
+			state.pages = Math.round(action.payload.length / 30);
 			state.queryResultTemplates = action.payload;
 		},
 		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
 			state.query = action.payload;
+		},
+		updateActivePage: (state, action: PayloadAction<number>) => {
+			state.activePage = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -58,11 +63,11 @@ export const templateSlice = createSlice({
 			})
 			.addCase(getTemplatesAsync.fulfilled, (state, action) => {
 				state.status = 'idle';
-				// if (action.payload) {
-				// 	state.pages = Math.round((action.payload.length / 30));
-				// }
+
 				state.pages = Math.round(action.payload.length / 30);
 				state.templates = action.payload;
+				// on page load, all templates are passed as query is empty
+				state.queryResultTemplates = action.payload;
 			})
 			.addCase(getTemplatesAsync.rejected, (state) => {
 				state.status = 'failed';
@@ -70,17 +75,19 @@ export const templateSlice = createSlice({
 	},
 });
 
-export const { setTemplates, setQueryResultTemplates, setQueryToStore } = templateSlice.actions;
+export const { setTemplates, setQueryResultTemplates, setQueryToStore, updateActivePage } = templateSlice.actions;
 
 // selectors
 export const selectAllTemplates = (state: RootState) => state.template.templates;
-export const selectTemplatesPerPage = (state: RootState) => state.template.templates.slice(0, 30);
-export const selectLengthOfTemplates = (state: RootState) => state.template.templates.length;
+
 export const selectState = (state: RootState) => state.template.status;
 export const selectPages = (state: RootState) => state.template.pages;
 export const selectActivePage = (state: RootState) => state.template.activePage;
 export const selectQueryData = (state: RootState) => state.template.query;
+
 export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
+export const selectTemplatesPerPage = (state: RootState) => state.template.queryResultTemplates.slice(0, 30);
+export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
@@ -92,24 +99,46 @@ export const queryResolver =
 		if (query !== storedQuery) {
 			query = { ...query, searchText: query.searchText?.trimLeft() };
 			dispatch(setQueryToStore(query));
+			dispatch(setQueryResultTemplates([]));
 
-			let sortedTemplates: Template[] = [];
+			let filteredTemplates: Template[] = [];
 			if (query.category !== 'default') {
-				sortedTemplates = totalTemplates.filter((template) => template.category.includes(query.category));
+				filteredTemplates = totalTemplates.filter((template) => template.category.includes(query.category));
 			} else {
-				sortedTemplates = totalTemplates;
+				filteredTemplates = totalTemplates;
 			}
 
-			// if (query.order !== 'default' && query.order === 'ascending') {
-			// 	sortedTemplates.sort((a,b) => {
-			// 		let nameA = a.name.toLowerCase();
-			// 		let nameB = b.name.toLowerCase();
-			// 		if(nameA < nameB) { return -1; }
-			// 		if(nameA > nameB) { return 1; }
-			// 		return 0;
-			// 	});
-			// }
-			dispatch(setQueryResultTemplates(sortedTemplates));
+			let orderSortedTemplates: Template[] = [];
+			if (query.order !== 'default') {
+				if (query.order === 'ascending') {
+					orderSortedTemplates = [...filteredTemplates].sort((a, b) =>
+						a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }),
+					);
+				} else {
+					orderSortedTemplates = [...filteredTemplates].sort((a, b) =>
+						b.name.localeCompare(a.name, 'en', { sensitivity: 'base' }),
+					);
+				}
+			} else {
+				orderSortedTemplates = filteredTemplates;
+			}
+
+			let dateSortedTemplates: Template[] = [];
+			if (query.date !== 'default') {
+				if (query.date === 'ascending') {
+					dateSortedTemplates = [...orderSortedTemplates].sort((a, b) =>
+						a.created.localeCompare(b.created, 'en', { sensitivity: 'base' }),
+					);
+				} else {
+					dateSortedTemplates = [...orderSortedTemplates].sort((a, b) =>
+						b.created.localeCompare(a.created, 'en', { sensitivity: 'base' }),
+					);
+				}
+			} else {
+				dateSortedTemplates = orderSortedTemplates;
+			}
+
+			dispatch(setQueryResultTemplates(dateSortedTemplates));
 		}
 	};
 

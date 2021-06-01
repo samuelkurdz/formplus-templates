@@ -10,17 +10,17 @@ import Paginator from '../paginator/paginator';
 
 const TemplatePreview = () => {
 	const templates = useAppSelector(selectTemplatesPerPage);
-	const noOfTemplates = useAppSelector(selectLengthOfTemplates);
+	const totalNumOfTemplates = useAppSelector(selectLengthOfTemplates);
 	return (
 		<div className="mt-12">
 			<div className="flex justify-between content-center">
 				<p>All Templates</p>
-				<p className="text-xs text-gray-400">{noOfTemplates.toLocaleString('en-US')} templates</p>
+				<p className="text-xs text-gray-400">{totalNumOfTemplates.toLocaleString('en-US')} templates</p>
 			</div>
 			<div className="flex flex-wrap justify-between gap-y-8 lg:gap-y-16 mt-3">
-				{templates.map((template, index) => {
+				{templates.map((template) => {
 					// eslint-disable-next-line react/no-array-index-key
-					return <TemplateCard key={index} {...template} />;
+					return <TemplateCard key={template.name} {...template} />;
 				})}
 			</div>
 			<Paginator />
