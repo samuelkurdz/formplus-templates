@@ -13,5 +13,5 @@ label > p {
 }
 
 select, input[type='text'] {
-	@apply text-xs rounded-sm;
+	@apply text-xs rounded-sm w-full;
 }

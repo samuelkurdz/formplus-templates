@@ -20,7 +20,7 @@ const Paginator: React.FC = () => {
 				<span>Prev</span>
 			</div>
 			<div>
-				<input type="text" name="pageNumber" id="pageNumber" />
+				<input className="w-16" max={PagesNumber} type="number" name="pageNumber" id="pageNumber" />
 				<span className="ml-2">of {PagesNumber}</span>
 			</div>
 			<div className="flex cursor-pointer">
