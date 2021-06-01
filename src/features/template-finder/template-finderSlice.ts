@@ -99,7 +99,8 @@ export const queryResolver =
 		if (query !== storedQuery) {
 			query = { ...query, searchText: query.searchText?.trimLeft() };
 			dispatch(setQueryToStore(query));
-			dispatch(setQueryResultTemplates([]));
+			//  this line of code does not seem to be important
+			// dispatch(setQueryResultTemplates([]));
 
 			let filteredTemplates: Template[] = [];
 			if (query.category !== 'default') {
