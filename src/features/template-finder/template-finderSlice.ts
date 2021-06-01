@@ -52,6 +52,9 @@ export const templateSlice = createSlice({
 		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
 			state.query = action.payload;
 		},
+		updateActivePage: (state, action: PayloadAction<number>) => {
+			state.activePage = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -72,19 +75,19 @@ export const templateSlice = createSlice({
 	},
 });
 
-export const { setTemplates, setQueryResultTemplates, setQueryToStore } = templateSlice.actions;
+export const { setTemplates, setQueryResultTemplates, setQueryToStore, updateActivePage } = templateSlice.actions;
 
 // selectors
 export const selectAllTemplates = (state: RootState) => state.template.templates;
-
-export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
-export const selectTemplatesPerPage = (state: RootState) => state.template.queryResultTemplates.slice(0, 30);
-export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
 
 export const selectState = (state: RootState) => state.template.status;
 export const selectPages = (state: RootState) => state.template.pages;
 export const selectActivePage = (state: RootState) => state.template.activePage;
 export const selectQueryData = (state: RootState) => state.template.query;
+
+export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
+export const selectTemplatesPerPage = (state: RootState) => state.template.queryResultTemplates.slice(0, 30);
+export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
