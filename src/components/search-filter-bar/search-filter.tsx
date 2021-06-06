@@ -4,7 +4,11 @@ import debounce from 'lodash.debounce';
 import './search-filter.css';
 
 import { useAppSelector, useAppDispatch } from '../../app-store/hooks';
-import { queryResolver, selectQueryData } from '../../features/template-finder/template-finderSlice';
+import {
+	queryResolver,
+	selectQueryData,
+	toggleProcessingQuery,
+} from '../../features/template-finder/template-finderSlice';
 import { QueryObject } from '../../models/template.interface';
 
 const SearchFilter = () => {
@@ -26,12 +30,14 @@ const SearchFilter = () => {
 	const onOrderSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
 		setOrderQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
 		const updatedQuery: QueryObject = { ...query, order: event.target.value };
 		delayedQuery(updatedQuery);
 	};
 	const onCategorySelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
 		setCategoryQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
 		setDateQuery('default');
 		setOrderQuery('default');
 		setSearchQuery('');
@@ -46,6 +52,7 @@ const SearchFilter = () => {
 	const onDateSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
 		setDateQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
 		const updatedQuery: QueryObject = { ...query, date: event.target.value };
 		delayedQuery(updatedQuery);
 	};
@@ -53,6 +60,7 @@ const SearchFilter = () => {
 	const getSearchNameQuery = (event: ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		setSearchQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
 		const updatedQuery: QueryObject = { ...query, searchText: event.target.value };
 		delayedQuery(updatedQuery);
 	};

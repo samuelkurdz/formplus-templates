@@ -1,9 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react';
+import './loader.css';
 
 const Loader = () => {
 	return (
 		<>
+			<div className="loader-overlay is-visible" id="modal-overlay" />
 			<div className="Loader text-blue-500">
 				<svg
 					className="animate-spin -ml-1 mr-3 h-20 w-20"
