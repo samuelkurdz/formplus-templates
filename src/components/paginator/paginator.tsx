@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useCallback } from 'react';
+import debounce from 'lodash.debounce';
 import { useAppDispatch, useAppSelector } from '../../app-store/hooks';
 import { selectActivePage, selectPages, updateActivePage } from '../../features/template-finder/template-finderSlice';
 
@@ -8,6 +9,13 @@ const Paginator: React.FC = () => {
 	const PagesNumber = useAppSelector(selectPages);
 
 	const currentPage = useAppSelector(selectActivePage);
+
+	const delayedQuery = useCallback(
+		debounce((updatedPageQuery: number) => {
+			dispatch(updateActivePage(updatedPageQuery));
+		}, 500),
+		[],
+	);
 
 	const handlePrevPage = () => {
 		const newPageQuery = currentPage - 1;
@@ -19,7 +27,7 @@ const Paginator: React.FC = () => {
 		dispatch(updateActivePage(newPageQuery));
 	};
 	const processCurrentPageChange = (event: ChangeEvent<HTMLInputElement>) => {
-		dispatch(updateActivePage(+event.target.value));
+		delayedQuery(+event.target.value);
 	};
 
 	return (

@@ -19,7 +19,7 @@ const SearchFilter = () => {
 	const delayedQuery = useCallback(
 		debounce((updatedQuery: QueryObject) => {
 			dispatch(queryResolver(updatedQuery));
-		}, 1000),
+		}, 700),
 		[],
 	);
 
