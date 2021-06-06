@@ -19,14 +19,27 @@ const Paginator: React.FC = () => {
 
 	const handlePrevPage = () => {
 		const newPageQuery = currentPage - 1;
+		if (newPageQuery === 0) {
+			// eslint-disable-next-line no-alert
+			alert('No Zeroth Page');
+			return;
+		}
 		dispatch(updateActivePage(newPageQuery));
 	};
 
 	const handleNextPage = () => {
 		const newPageQuery = currentPage + 1;
+		if (newPageQuery > PagesNumber) {
+			// eslint-disable-next-line no-alert
+			alert('No Page Higher than this Page');
+			return;
+		}
 		dispatch(updateActivePage(newPageQuery));
 	};
 	const processCurrentPageChange = (event: ChangeEvent<HTMLInputElement>) => {
+		if (+event.target.value <= 0 || +event.target.value > PagesNumber) {
+			return;
+		}
 		delayedQuery(+event.target.value);
 	};
 
