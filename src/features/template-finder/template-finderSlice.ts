@@ -46,7 +46,7 @@ export const templateSlice = createSlice({
 			state.templates = action.payload;
 		},
 		setQueryResultTemplates: (state, action: PayloadAction<Template[]>) => {
-			state.pages = Math.round(action.payload.length / 30);
+			state.pages = Math.ceil(action.payload.length / 30);
 			state.queryResultTemplates = action.payload;
 		},
 		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
@@ -64,7 +64,7 @@ export const templateSlice = createSlice({
 			.addCase(getTemplatesAsync.fulfilled, (state, action) => {
 				state.status = 'idle';
 
-				state.pages = Math.round(action.payload.length / 30);
+				state.pages = Math.ceil(action.payload.length / 30);
 				state.templates = action.payload;
 				// on page load, all templates are passed as query is empty
 				state.queryResultTemplates = action.payload;
