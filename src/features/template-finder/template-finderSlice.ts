@@ -46,7 +46,7 @@ export const templateSlice = createSlice({
 			state.templates = action.payload;
 		},
 		setQueryResultTemplates: (state, action: PayloadAction<Template[]>) => {
-			state.pages = Math.round(action.payload.length / 30);
+			state.pages = Math.ceil(action.payload.length / 30);
 			state.queryResultTemplates = action.payload;
 		},
 		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
@@ -64,7 +64,7 @@ export const templateSlice = createSlice({
 			.addCase(getTemplatesAsync.fulfilled, (state, action) => {
 				state.status = 'idle';
 
-				state.pages = Math.round(action.payload.length / 30);
+				state.pages = Math.ceil(action.payload.length / 30);
 				state.templates = action.payload;
 				// on page load, all templates are passed as query is empty
 				state.queryResultTemplates = action.payload;
@@ -86,41 +86,54 @@ export const selectActivePage = (state: RootState) => state.template.activePage;
 export const selectQueryData = (state: RootState) => state.template.query;
 
 export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
-export const selectTemplatesPerPage = (state: RootState) => state.template.queryResultTemplates.slice(0, 30);
+export const selectTemplatesPerPage = (state: RootState) => {
+	return state.template.queryResultTemplates.slice(
+		31 * (state.template.activePage - 1),
+		state.template.activePage * 31 - 1,
+	);
+};
 export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 export const queryResolver =
-	(query: QueryObject): AppThunk =>
+	(recievedQuery: QueryObject): AppThunk =>
 	async (dispatch, getState) => {
+		let query = recievedQuery;
 		const storedQuery = selectQueryData(getState());
 		const totalTemplates = selectAllTemplates(getState());
 		if (query !== storedQuery) {
-			query = { ...query, searchText: query.searchText?.trimLeft() };
+			const trimmedSearchText = query.searchText.trim().toLowerCase();
+			query = { ...query, searchText: trimmedSearchText };
 			dispatch(setQueryToStore(query));
-			dispatch(setQueryResultTemplates([]));
 
-			let filteredTemplates: Template[] = [];
+			let textFilteredTemplates: Template[] = [];
+			textFilteredTemplates = totalTemplates.filter((template) =>
+				template.name.toLowerCase().includes(trimmedSearchText),
+			);
+
+			let categoryFilteredTemplates: Template[] = [];
 			if (query.category !== 'default') {
-				filteredTemplates = totalTemplates.filter((template) => template.category.includes(query.category));
+				categoryFilteredTemplates = textFilteredTemplates.filter((template) =>
+					template.category.includes(query.category),
+				);
 			} else {
-				filteredTemplates = totalTemplates;
+				categoryFilteredTemplates = textFilteredTemplates;
 			}
 
 			let orderSortedTemplates: Template[] = [];
 			if (query.order !== 'default') {
 				if (query.order === 'ascending') {
-					orderSortedTemplates = [...filteredTemplates].sort((a, b) =>
+					orderSortedTemplates = [...categoryFilteredTemplates].sort((a, b) =>
 						a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }),
 					);
 				} else {
-					orderSortedTemplates = [...filteredTemplates].sort((a, b) =>
+					orderSortedTemplates = [...categoryFilteredTemplates].sort((a, b) =>
 						b.name.localeCompare(a.name, 'en', { sensitivity: 'base' }),
 					);
 				}
 			} else {
-				orderSortedTemplates = filteredTemplates;
+				orderSortedTemplates = categoryFilteredTemplates;
 			}
 
 			let dateSortedTemplates: Template[] = [];
