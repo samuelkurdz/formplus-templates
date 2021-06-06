@@ -98,7 +98,7 @@ export const queryResolver =
 		const storedQuery = selectQueryData(getState());
 		const totalTemplates = selectAllTemplates(getState());
 		if (query !== storedQuery) {
-			const trimmedSearchText = query.searchText.trimLeft().toLowerCase();
+			const trimmedSearchText = query.searchText.trim().toLowerCase();
 			query = { ...query, searchText: trimmedSearchText };
 			dispatch(setQueryToStore(query));
 
@@ -106,8 +106,6 @@ export const queryResolver =
 			textFilteredTemplates = totalTemplates.filter((template) =>
 				template.name.toLowerCase().includes(trimmedSearchText),
 			);
-			//  this line of code does not seem to be important
-			// dispatch(setQueryResultTemplates([]));
 
 			let categoryFilteredTemplates: Template[] = [];
 			if (query.category !== 'default') {

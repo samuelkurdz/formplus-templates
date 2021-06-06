@@ -33,6 +33,7 @@ const Paginator: React.FC = () => {
 					className="w-16 py-2 px-1.5"
 					value={currentPage}
 					onChange={processCurrentPageChange}
+					min="1"
 					max={PagesNumber}
 					type="number"
 					name="pageNumber"
