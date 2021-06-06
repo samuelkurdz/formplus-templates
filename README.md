@@ -33,7 +33,7 @@ To check for any linting error in the application
 2. [Lodash.debounce](https://lodash.com/docs/4.17.15#debounce)
 3. [EsLint](https://eslint.org/)
 4. [Prettier](https://prettier.io/)
-4. [TypeScript](https://www.typescriptlang.org/)
-4. [Jest](https://jestjs.io/)
+5. [TypeScript](https://www.typescriptlang.org/)
+6. [Jest](https://jestjs.io/)
 
 
