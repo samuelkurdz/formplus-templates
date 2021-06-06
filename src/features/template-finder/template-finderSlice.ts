@@ -87,7 +87,10 @@ export const selectQueryData = (state: RootState) => state.template.query;
 
 export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
 export const selectTemplatesPerPage = (state: RootState) => {
-	return state.template.queryResultTemplates.slice(0, 30);
+	return state.template.queryResultTemplates.slice(
+		31 * (state.template.activePage - 1),
+		state.template.activePage * 31 - 1,
+	);
 };
 export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
 
