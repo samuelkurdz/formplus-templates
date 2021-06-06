@@ -9,7 +9,7 @@ In the project directory, you can run:
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-### **Testing** `npm test`
+###  `Testing*: npm test`
 
 I am have not being able to write comprehensible test for the applicatin I believe this is the only
 thing I have not done. I aim to write the testing by using Jest with react-testing Library.
@@ -27,7 +27,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 To check for any linting error in the application
 
-## Important Packages/ Libraries Used
+### `Important Packages/ Libraries Used`
 
 1. [Tailwindcss](https://tailwindcss.com/)
 2. [Lodash.debounce](https://lodash.com/docs/4.17.15#debounce)
@@ -37,3 +37,6 @@ To check for any linting error in the application
 4. [Jest](https://jestjs.io/)
 
 
+### `Lighthouse Performance Analysis`
+
+![form-plus](https://user-images.githubusercontent.com/35204637/120913914-695a9100-c692-11eb-8989-a74520b9fb76.PNG)
