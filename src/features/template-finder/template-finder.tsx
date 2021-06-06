@@ -39,7 +39,7 @@ const TemplateFinder = () => {
 	const message =
 		'Tada! Get started with a free template. Can’t find what you are looking for? Search from the 1000+ available templates';
 	return (
-		<div className="my-6 px-4 sm:px-8 md:px-14 lg:px-40">
+		<div className="my-6 px-4 sm:px-8 md:px-14 lg:px-16">
 			<SearchFilter />
 			<Alert message={message} type="warning" />
 			{returnedComponent}
