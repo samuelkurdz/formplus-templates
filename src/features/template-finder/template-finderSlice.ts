@@ -86,7 +86,9 @@ export const selectActivePage = (state: RootState) => state.template.activePage;
 export const selectQueryData = (state: RootState) => state.template.query;
 
 export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
-export const selectTemplatesPerPage = (state: RootState) => state.template.queryResultTemplates.slice(0, 30);
+export const selectTemplatesPerPage = (state: RootState) => {
+	return state.template.queryResultTemplates.slice(0, 30);
+};
 export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
 
 // We can also write thunks by hand, which may contain both sync and async logic.

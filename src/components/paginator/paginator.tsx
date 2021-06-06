@@ -6,17 +6,25 @@ import { selectActivePage, selectPages, updateActivePage } from '../../features/
 const Paginator: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const PagesNumber = useAppSelector(selectPages);
+
 	const currentPage = useAppSelector(selectActivePage);
 
+	const handlePrevPage = () => {
+		const newPageQuery = currentPage - 1;
+		dispatch(updateActivePage(newPageQuery));
+	};
+
+	const handleNextPage = () => {
+		const newPageQuery = currentPage + 1;
+		dispatch(updateActivePage(newPageQuery));
+	};
 	const processCurrentPageChange = (event: ChangeEvent<HTMLInputElement>) => {
-		// eslint-disable-next-line no-console
-		console.log(+event.target.value);
 		dispatch(updateActivePage(+event.target.value));
 	};
 
 	return (
 		<div className="flex justify-between items-center text-xs mt-9">
-			<div className="flex cursor-pointer">
+			<div aria-hidden="true" className="flex cursor-pointer hover:text-blue-600" onClick={handlePrevPage}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					className="h-4 w-4"
@@ -41,7 +49,7 @@ const Paginator: React.FC = () => {
 				/>
 				<span className="ml-2">of {PagesNumber}</span>
 			</div>
-			<div className="flex cursor-pointer">
+			<div aria-hidden="true" className="flex cursor-pointer hover:text-blue-600" onClick={handleNextPage}>
 				<span>Next</span>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
