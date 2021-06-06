@@ -19,14 +19,23 @@ const Paginator: React.FC = () => {
 
 	const handlePrevPage = () => {
 		const newPageQuery = currentPage - 1;
+		if (newPageQuery === 0) {
+			return;
+		}
 		dispatch(updateActivePage(newPageQuery));
 	};
 
 	const handleNextPage = () => {
 		const newPageQuery = currentPage + 1;
+		if (newPageQuery > PagesNumber) {
+			return;
+		}
 		dispatch(updateActivePage(newPageQuery));
 	};
 	const processCurrentPageChange = (event: ChangeEvent<HTMLInputElement>) => {
+		if (+event.target.value <= 0 || +event.target.value > PagesNumber) {
+			return;
+		}
 		delayedQuery(+event.target.value);
 	};
 

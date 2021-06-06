@@ -4,7 +4,11 @@ import debounce from 'lodash.debounce';
 import './search-filter.css';
 
 import { useAppSelector, useAppDispatch } from '../../app-store/hooks';
-import { queryResolver, selectQueryData } from '../../features/template-finder/template-finderSlice';
+import {
+	queryResolver,
+	selectQueryData,
+	toggleProcessingQuery,
+} from '../../features/template-finder/template-finderSlice';
 import { QueryObject } from '../../models/template.interface';
 
 const SearchFilter = () => {
@@ -23,45 +27,42 @@ const SearchFilter = () => {
 		[],
 	);
 
-	const onSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+	const onOrderSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
-		switch (event.target.name) {
-			case 'category':
-				setCategoryQuery(event.target.value);
-				break;
-			case 'order':
-				setOrderQuery(event.target.value);
-				break;
-			default:
-				setDateQuery(event.target.value);
-				break;
-		}
-		const updatedQuery: QueryObject = { ...query, [event.target.name]: event.target.value };
+		setOrderQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
+		const updatedQuery: QueryObject = { ...query, order: event.target.value };
 		delayedQuery(updatedQuery);
 	};
-
-	// const onOrderSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-	// 	event.preventDefault();
-	// 	const updatedQuery: QueryObject = { ...query, order: event.target.value };
-	// 	dispatch(queryResolver(updatedQuery));
-	// };
-	// const onCategorySelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-	// 	event.preventDefault();
-	// 	const updatedQuery: QueryObject = { ...query, category: event.target.value };
-	// 	dispatch(queryResolver(updatedQuery));
-	// };
-	// const onDateSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-	// 	event.preventDefault();
-	// 	const updatedQuery: QueryObject = { ...query, date: event.target.value };
-	// 	dispatch(queryResolver(updatedQuery));
-	// };
+	const onCategorySelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+		event.preventDefault();
+		setCategoryQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
+		setDateQuery('default');
+		setOrderQuery('default');
+		setSearchQuery('');
+		const updatedQuery: QueryObject = {
+			date: 'default',
+			order: 'default',
+			searchText: '',
+			category: event.target.value,
+		};
+		delayedQuery(updatedQuery);
+	};
+	const onDateSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+		event.preventDefault();
+		setDateQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
+		const updatedQuery: QueryObject = { ...query, date: event.target.value };
+		delayedQuery(updatedQuery);
+	};
 
 	const getSearchNameQuery = (event: ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		setSearchQuery(event.target.value);
+		dispatch(toggleProcessingQuery(true));
 		const updatedQuery: QueryObject = { ...query, searchText: event.target.value };
 		delayedQuery(updatedQuery);
-		// dispatch(queryResolver(updatedQuery));
 	};
 
 	return (
@@ -96,7 +97,7 @@ const SearchFilter = () => {
 					<div className="form-group">
 						<label htmlFor="category">
 							<p>Category</p>
-							<select name="category" id="category" value={categoryQuery} onChange={onSelectChange}>
+							<select name="category" id="category" value={categoryQuery} onChange={onCategorySelectChange}>
 								<option value="default">All</option>
 								<option value="Education">Education</option>
 								<option value="E-commerce">E-commerce</option>
@@ -107,7 +108,7 @@ const SearchFilter = () => {
 					<div className="form-group">
 						<label htmlFor="order">
 							<p>Order</p>
-							<select name="order" id="order" value={orderQuery} onChange={onSelectChange}>
+							<select name="order" id="order" value={orderQuery} onChange={onOrderSelectChange}>
 								<option value="default">Default</option>
 								<option value="ascending">Ascending</option>
 								<option value="descending">Descending</option>
@@ -117,7 +118,7 @@ const SearchFilter = () => {
 					<div className="form-group">
 						<label htmlFor="date">
 							<p>Date</p>
-							<select name="date" id="date" value={dateQuery} onChange={onSelectChange}>
+							<select name="date" id="date" value={dateQuery} onChange={onDateSelectChange}>
 								<option value="default">Default</option>
 								<option value="ascending">Ascending</option>
 								<option value="descending">Descending</option>

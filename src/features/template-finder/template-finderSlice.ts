@@ -11,6 +11,7 @@ export interface TemplateState {
 	status: 'loading' | 'idle' | 'failed';
 	queryResultTemplates: Template[];
 	query: QueryObject;
+	processingQuery: boolean;
 }
 
 const initialState: TemplateState = {
@@ -25,6 +26,7 @@ const initialState: TemplateState = {
 		order: 'default',
 	},
 	queryResultTemplates: [],
+	processingQuery: false,
 };
 
 // Async code can be executed and other actions can be dispatched. Thunks are
@@ -48,12 +50,16 @@ export const templateSlice = createSlice({
 		setQueryResultTemplates: (state, action: PayloadAction<Template[]>) => {
 			state.pages = Math.ceil(action.payload.length / 30);
 			state.queryResultTemplates = action.payload;
+			state.processingQuery = !state.processingQuery;
 		},
 		setQueryToStore: (state, action: PayloadAction<QueryObject>) => {
 			state.query = action.payload;
 		},
 		updateActivePage: (state, action: PayloadAction<number>) => {
 			state.activePage = action.payload;
+		},
+		toggleProcessingQuery: (state, action: PayloadAction<boolean>) => {
+			state.processingQuery = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -75,7 +81,8 @@ export const templateSlice = createSlice({
 	},
 });
 
-export const { setTemplates, setQueryResultTemplates, setQueryToStore, updateActivePage } = templateSlice.actions;
+export const { setTemplates, setQueryResultTemplates, setQueryToStore, updateActivePage, toggleProcessingQuery } =
+	templateSlice.actions;
 
 // selectors
 export const selectAllTemplates = (state: RootState) => state.template.templates;
@@ -86,10 +93,12 @@ export const selectActivePage = (state: RootState) => state.template.activePage;
 export const selectQueryData = (state: RootState) => state.template.query;
 
 export const selectQueryResultTemplates = (state: RootState) => state.template.queryResultTemplates;
+export const selectIsProcessingQuery = (state: RootState) => state.template.processingQuery;
 export const selectTemplatesPerPage = (state: RootState) => {
 	return state.template.queryResultTemplates.slice(
-		31 * (state.template.activePage - 1),
-		state.template.activePage * 31 - 1,
+		30 * (state.template.activePage - 1),
+		// eslint-disable-next-line prettier/prettier
+		(30 * state.template.activePage),
 	);
 };
 export const selectLengthOfTemplates = (state: RootState) => state.template.queryResultTemplates.length;
@@ -152,6 +161,8 @@ export const queryResolver =
 			}
 
 			dispatch(setQueryResultTemplates(dateSortedTemplates));
+		} else {
+			dispatch(toggleProcessingQuery(false));
 		}
 	};
 
