@@ -92,36 +92,45 @@ export const selectLengthOfTemplates = (state: RootState) => state.template.quer
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 export const queryResolver =
-	(query: QueryObject): AppThunk =>
+	(recievedQuery: QueryObject): AppThunk =>
 	async (dispatch, getState) => {
+		let query = recievedQuery;
 		const storedQuery = selectQueryData(getState());
 		const totalTemplates = selectAllTemplates(getState());
 		if (query !== storedQuery) {
-			query = { ...query, searchText: query.searchText?.trimLeft() };
+			const trimmedSearchText = query.searchText.trimLeft().toLowerCase();
+			query = { ...query, searchText: trimmedSearchText };
 			dispatch(setQueryToStore(query));
+
+			let textFilteredTemplates: Template[] = [];
+			textFilteredTemplates = totalTemplates.filter((template) =>
+				template.name.toLowerCase().includes(trimmedSearchText),
+			);
 			//  this line of code does not seem to be important
 			// dispatch(setQueryResultTemplates([]));
 
-			let filteredTemplates: Template[] = [];
+			let categoryFilteredTemplates: Template[] = [];
 			if (query.category !== 'default') {
-				filteredTemplates = totalTemplates.filter((template) => template.category.includes(query.category));
+				categoryFilteredTemplates = textFilteredTemplates.filter((template) =>
+					template.category.includes(query.category),
+				);
 			} else {
-				filteredTemplates = totalTemplates;
+				categoryFilteredTemplates = textFilteredTemplates;
 			}
 
 			let orderSortedTemplates: Template[] = [];
 			if (query.order !== 'default') {
 				if (query.order === 'ascending') {
-					orderSortedTemplates = [...filteredTemplates].sort((a, b) =>
+					orderSortedTemplates = [...categoryFilteredTemplates].sort((a, b) =>
 						a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }),
 					);
 				} else {
-					orderSortedTemplates = [...filteredTemplates].sort((a, b) =>
+					orderSortedTemplates = [...categoryFilteredTemplates].sort((a, b) =>
 						b.name.localeCompare(a.name, 'en', { sensitivity: 'base' }),
 					);
 				}
 			} else {
-				orderSortedTemplates = filteredTemplates;
+				orderSortedTemplates = categoryFilteredTemplates;
 			}
 
 			let dateSortedTemplates: Template[] = [];
